@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Abedmuh/api-traceroot/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,6 +19,11 @@ type icmpCtrlInter interface {
 	PostCountSSE(c *gin.Context)
 }
 
+type icmpModel struct {
+	address string
+	command string
+}
+
 type icmpCtrlImpl struct {
 }
 
@@ -26,20 +32,33 @@ func NewIcmpController() icmpCtrlInter {
 }
 
 func (c *icmpCtrlImpl) PostPing(ctx *gin.Context) {
-	var req string
+	var req icmpModel
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(200, gin.H{"req": req})
+
+	output, err := utils.SshTarget(req.address, req.command)
+	if err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(200, gin.H{"data": output})
 }
 
 func (c *icmpCtrlImpl) PostTraceroute(ctx *gin.Context) {
-	var req string
+	var req icmpModel
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
+
+	output, err := utils.SshTarget(req.address, req.command)
+	if err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(200, gin.H{"data": output})
 }
 
 func (c *icmpCtrlImpl) PostCountSSE(ctx *gin.Context) {

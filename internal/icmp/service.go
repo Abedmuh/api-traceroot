@@ -13,6 +13,7 @@ func NewIcmpSvc() icmpSvc {
 }
 
 func (i *icmpSvcImpl) Ping(addr string) (int, error) {
+
 	return 0, nil
 }
 
