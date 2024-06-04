@@ -20,8 +20,8 @@ type icmpCtrlInter interface {
 }
 
 type icmpModel struct {
-	address string
-	command string
+	Address string `json:"address"`
+	Command string `json:"command"`
 }
 
 type icmpCtrlImpl struct {
@@ -38,7 +38,7 @@ func (c *icmpCtrlImpl) PostPing(ctx *gin.Context) {
 		return
 	}
 
-	output, err := utils.SshTarget(req.address, req.command)
+	output, err := utils.SshTarget(req.Address, req.Command)
 	if err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
@@ -53,7 +53,7 @@ func (c *icmpCtrlImpl) PostTraceroute(ctx *gin.Context) {
 		return
 	}
 
-	output, err := utils.SshTarget(req.address, req.command)
+	output, err := utils.SshTarget(req.Address, req.Command)
 	if err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return

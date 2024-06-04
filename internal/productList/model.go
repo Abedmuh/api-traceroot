@@ -1,8 +1,12 @@
 package productlist
 
-import "time"
+import (
+	"time"
 
-//main
+	"github.com/Abedmuh/api-traceroot/internal/products"
+)
+
+// main
 type ProductList struct {
 	Id          string
 	Id_products string
@@ -13,15 +17,15 @@ type ProductList struct {
 	Created_at  time.Time
 }
 
-//request
+// request
 type ReqProdList struct {
-	Id          string
-	Id_products string
-	Owner       string
-	TimeLimit   time.Time
+	Id        string
+	Products  products.Products
+	Owner     string
+	TimeLimit time.Time
 }
 
-//response
+// response
 type ResProdList struct {
 	Id          string
 	Id_products string

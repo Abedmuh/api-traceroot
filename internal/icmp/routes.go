@@ -7,6 +7,7 @@ import (
 func IcmpRoutes(route *gin.RouterGroup) {
 
 	controller := NewIcmpController()
+	// service := NewIcmpSvc()
 
 	endpoint := route.Group("/icmp")
 	{

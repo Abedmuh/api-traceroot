@@ -32,10 +32,7 @@ func SshTarget(addr string, command string) (string, error) {
 
 	// Execute the command with the IP address
 	fullCommand := fmt.Sprintf("%s %s", command, addr)
-	fmt.Println(fullCommand)
-	fmt.Println(command)
-	fmt.Println(addr)
-	output, err := session.CombinedOutput("/usr/sbin/mtr -rnc 3 8.8.8.8")
+	output, err := session.CombinedOutput(fullCommand)
 	if err != nil {
 		return "", fmt.Errorf("failed to run command: %v", err)
 	}
