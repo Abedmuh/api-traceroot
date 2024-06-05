@@ -9,7 +9,7 @@ type ProdSvcInter interface {
 type ProdSvcImpl struct {
 }
 
-func NewProdSvc() ProdSvcInter {
+func NewProductService() ProdSvcInter {
 	return &ProdSvcImpl{}
 }
 

@@ -1,44 +1,60 @@
 package utils
 
 import (
-	"database/sql"
 	"fmt"
+	"log"
 
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-func GetDBConnection() (*sql.DB, error) {
+func GetDBConnection() (*gorm.DB, error) {
 
+	viper.SetConfigFile(".env")
+	viper.AddConfigPath("../")
 	viper.AutomaticEnv()
-	// if err := viper.ReadInConfig(); err != nil {
-	// 	if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-	// 		log.Printf("Error reading .env file: %v\n", err)
-	// 		log.Println("Switching to environment variables...")
-	// 	} else {
-	// 		log.Fatalf("file found but error: %v\n", err)
-	// 	}
-	// }
-
-	// dbUser := viper.GetString("DB_USERNAME")
-	// dbPassword := viper.GetString("DB_PASSWORD")
-	// dbHost := viper.GetString("DB_HOST")
-	// dbPort := viper.GetString("DB_PORT")
-	// dbName := viper.GetString("DB_NAME")
-	// dbParams := viper.GetString("DB_PARAMS")
-
-	// connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-	// 	dbUser, dbPassword, dbHost, dbPort, dbName)
-
-	db, err := sql.Open("postgres", "postgres://postgres:pass@localhost:5432/abhvps?sslmode=disable")
-	if err != nil {
-		return nil, fmt.Errorf("error connecting to database: %s", err)
-	} else {
-		fmt.Println("Connected to database")
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			log.Printf("Error reading .env file: %v\n", err)
+			log.Println("Switching to environment variables...")
+		} else {
+			log.Fatalf("file found but error: %v\n", err)
+		}
 	}
 
-	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("error pinging database: %s", err)
+	dbUser := viper.GetString("DB_USERNAME")
+	dbPassword := viper.GetString("DB_PASSWORD")
+	dbHost := viper.GetString("DB_HOST")
+	dbPort := viper.GetString("DB_PORT")
+	dbName := viper.GetString("DB_NAME")
+	dbParams := viper.GetString("DB_PARAMS")
+
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?%s",
+		dbUser, dbPassword, dbHost, dbPort, dbName, dbParams)
+
+	fmt.Println(connStr)
+
+	// db, err := sql.Open("postgres", connStr)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("error connecting to database: %s", err)
+	// } else {
+	// 	fmt.Println("Connected to database")
+	// }
+
+	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	// Ping the database to ensure connection is established
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+	if err := sqlDB.Ping(); err != nil {
+		return nil, err
 	}
 
 	return db, nil

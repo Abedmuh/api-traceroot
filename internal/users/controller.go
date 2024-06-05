@@ -1,10 +1,9 @@
 package users
 
 import (
-	"database/sql"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 )
 
 //interfaces
@@ -16,11 +15,11 @@ type UserCtrlInter interface {
 
 type UserCtrlImpl struct {
 	service  UserSvcInter
-	DB       *sql.DB
+	DB       *gorm.DB
 	validate *validator.Validate
 }
 
-func NewUserController(service UserSvcInter, DB *sql.DB, validate *validator.Validate) UserCtrlInter {
+func NewUserController(service UserSvcInter, DB *gorm.DB, validate *validator.Validate) UserCtrlInter {
 	return &UserCtrlImpl{
 		service:  service,
 		DB:       DB,
@@ -29,7 +28,7 @@ func NewUserController(service UserSvcInter, DB *sql.DB, validate *validator.Val
 }
 
 func (c *UserCtrlImpl) PostUser(ctx *gin.Context) {
-	var req ReqUserReg
+	var req Users
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
@@ -38,12 +37,12 @@ func (c *UserCtrlImpl) PostUser(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	output, err := c.service.CreateUser(req, c.DB, ctx)
+	_, err := c.service.CreateUser(req, c.DB, ctx)
 	if err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(200, gin.H{"data": output})
+	ctx.JSON(200, gin.H{"message": "Successfully created"})
 }
 
 func (c *UserCtrlImpl) LoginUser(ctx *gin.Context) {
@@ -57,19 +56,14 @@ func (c *UserCtrlImpl) LoginUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := c.service.CheckUserLog(req.Email, c.DB, ctx)
+	res, err := c.service.LoginUser(req, c.DB, ctx)
 	if err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	res, err := c.service.LoginUser(user, req, c.DB, ctx)
-	if err != nil {
-		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
-		return
-	}
 	ctx.JSON(200, gin.H{
-		"message": "User logged in successfully",
 		"data":    res,
+		"message": "User logged in successfully",
 	})
 }

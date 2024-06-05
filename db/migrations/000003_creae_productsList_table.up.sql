@@ -2,7 +2,14 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE productList (
     id VARCHAR(45) PRIMARY KEY,
-    id_products VARCHAR(45) REFERENCES products(id),
+    name VARCHAR(255),
+    os VARCHAR(255),
+    ram VARCHAR(255),
+    cpu VARCHAR(255),
+    storage VARCHAR(255),
+    firewall TEXT[],
+    selinux BOOLEAN,
+    location VARCHAR(255),
     owner UUID REFERENCES users(id),
     timelimit TIME,
     username VARCHAR(64),

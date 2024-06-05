@@ -7,14 +7,22 @@ import (
 )
 
 // main
+//
+//	type ProductList struct {
+//		Id          string
+//		Id_products string
+//		Owner       string
+//		TimeLimit   time.Time
+//		Username    string
+//		Password    string
+//		Created_at  time.Time
+//	}
 type ProductList struct {
-	Id          string
-	Id_products string
-	Owner       string
-	TimeLimit   time.Time
-	Username    string
-	Password    string
-	Created_at  time.Time
+	Owner      string
+	TimeLimit  time.Time
+	Username   string
+	Password   string
+	Created_at time.Time
 }
 
 // request

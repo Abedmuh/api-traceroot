@@ -26,7 +26,7 @@ func main() {
 	{
 		icmp.IcmpRoutes(v1)
 		productlist.ProductlistRoutes(v1, db, validate)
-		users.UserRoutes(v1, db, validate)
+		users.RoutesUser(v1, db, validate)
 	}
 	api.Run(":8080") // listen and serve on 0.0.0.0:8080
 }

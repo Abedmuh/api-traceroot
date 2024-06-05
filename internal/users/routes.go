@@ -1,13 +1,12 @@
 package users
 
 import (
-	"database/sql"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 )
 
-func UserRoutes(route *gin.RouterGroup, db *sql.DB, validate *validator.Validate) {
+func RoutesUser(route *gin.RouterGroup, db *gorm.DB, validate *validator.Validate) {
 	service := NewUserService()
 	controller := NewUserController(service, db, validate)
 
