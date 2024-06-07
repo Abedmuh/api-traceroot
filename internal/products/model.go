@@ -1,7 +1,7 @@
 package products
 
 //main
-type Products struct {
+type Product struct {
 	Id       string `json:"id"`
 	Name     string `json:"name"`
 	Os       string `json:"os"`
@@ -12,7 +12,7 @@ type Products struct {
 	Location string `json:"location"`
 }
 
-type Product struct {
+type Products struct {
 	Name     string `json:"name" validate:"required"`
 	Os       string `json:"os" validate:"required"`
 	Cpu      string `json:"cpu" validate:"required"`

@@ -1,7 +1,5 @@
 package users
 
-import "github.com/golang-jwt/jwt/v5"
-
 //main model
 type User struct {
 	Id         string `json:"id"`
@@ -12,6 +10,7 @@ type User struct {
 	Perusahaan string `json:"perusahaan"`
 	No_tlpn    string `json:"no_tlpn"`
 	CreatedAt  string `json:"created_at"`
+	Deleted_at string `json:"deleted_at"`
 }
 
 // request
@@ -27,11 +26,6 @@ type Users struct {
 type ReqUserLog struct {
 	Email    string `json:"email" validate:"required,min=5,max=50"`
 	Password string `json:"password" validate:"required,min=5,max=15"`
-}
-
-type Claims struct {
-	Email string `json:"email"`
-	jwt.RegisteredClaims
 }
 
 // response

@@ -1,6 +1,7 @@
 package productlist
 
 import (
+	"github.com/Abedmuh/api-traceroot/utils/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
@@ -11,9 +12,9 @@ func ProductlistRoutes(route *gin.RouterGroup, db *gorm.DB, validate *validator.
 	service := NewProdListSvc()
 	controller := NewProdListCtrl(service, db, validate)
 
-	// route.Use(middleware.Authentication())
 	endpoint := route.Group("/productlist")
 	{
+		endpoint.Use(middleware.Authentication())
 		endpoint.POST("/", controller.PostProductList)
 		endpoint.GET("/", controller.GetProductLists)
 		endpoint.GET("/:id", controller.GetProductList)

@@ -7,9 +7,10 @@ CREATE TABLE products (
     ram VARCHAR(255),
     cpu VARCHAR(255),
     storage VARCHAR(255),
-    firewall TEXT[],
-    selinux BOOLEAN,
-    location VARCHAR(255)
+    firewall BOOLEAN,
+    selinux VARCHAR(255),
+    location VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE OR REPLACE FUNCTION add_prefix_to_products() RETURNS TRIGGER AS $$

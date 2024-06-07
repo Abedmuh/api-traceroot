@@ -9,5 +9,6 @@ CREATE TABLE IF NOT EXISTS users (
     perusahaan VARCHAR(255),
     jabatan VARCHAR(255),
     no_telpn VARCHAR(255) UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
 )

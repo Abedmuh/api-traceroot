@@ -1,21 +1,21 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE productList (
-    id VARCHAR(45) PRIMARY KEY,
+    id VARCHAR(255) PRIMARY KEY,
     name VARCHAR(255),
     os VARCHAR(255),
     ram VARCHAR(255),
     cpu VARCHAR(255),
     storage VARCHAR(255),
-    firewall TEXT[],
-    selinux BOOLEAN,
+    firewall BOOLEAN,
+    selinux VARCHAR(255),
     location VARCHAR(255),
-    owner UUID REFERENCES users(id),
-    timelimit TIME,
+    owner VARCHAR(255),
+    timelimit TIMESTAMP,
     username VARCHAR(64),
-    pass VARCHAR(64),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    password VARCHAR(64),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
 );
 
 CREATE OR REPLACE FUNCTION add_prefix_to_productlist_uuid() RETURNS TRIGGER AS $$

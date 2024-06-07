@@ -33,13 +33,15 @@ func Authentication() gin.HandlerFunc {
 			return []byte(secretKey), nil
 		})
 		if err != nil {
-			c.AbortWithStatusJSON(401, gin.H{"error": "Unauthenticated"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthenticated"})
+			return
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			c.Set("user", claims["user"])
+			c.Set("email", claims["email"])
 		} else {
-			c.AbortWithStatusJSON(401, gin.H{"error": "fail to get user"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "fail to get user"})
+			return
 		}
 
 		c.Next()
