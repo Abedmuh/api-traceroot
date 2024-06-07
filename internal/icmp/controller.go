@@ -15,7 +15,6 @@ import (
 
 type icmpCtrlInter interface {
 	PostPing(c *gin.Context)
-	PostTraceroute(c *gin.Context)
 	PostCountSSE(c *gin.Context)
 }
 
@@ -32,21 +31,6 @@ func NewIcmpController() icmpCtrlInter {
 }
 
 func (c *icmpCtrlImpl) PostPing(ctx *gin.Context) {
-	var req icmpModel
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
-		return
-	}
-
-	output, err := utils.SshTarget(req.Address, req.Command)
-	if err != nil {
-		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
-		return
-	}
-	ctx.JSON(200, gin.H{"data": output})
-}
-
-func (c *icmpCtrlImpl) PostTraceroute(ctx *gin.Context) {
 	var req icmpModel
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})

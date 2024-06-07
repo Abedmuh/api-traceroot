@@ -15,6 +15,7 @@ CREATE TABLE productList (
     username VARCHAR(64),
     pass VARCHAR(64),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE OR REPLACE FUNCTION add_prefix_to_productlist_uuid() RETURNS TRIGGER AS $$

@@ -42,6 +42,7 @@ func (u *UserSvcImpl) CreateUser(req Users, tx *gorm.DB, ctx *gin.Context) (ResU
 		return ResUser{}, err
 	}
 
+	// matching password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return ResUser{}, err

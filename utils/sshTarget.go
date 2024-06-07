@@ -3,21 +3,26 @@ package utils
 import (
 	"fmt"
 
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh"
 )
 
 func SshTarget(addr string, command string) (string, error) {
+
+	targetSSH := viper.GetString("SSH_TARGET")
+	username := viper.GetString("SSH_USERNAME")
+	password := viper.GetString("SSH_PASSWORD")
 	// SSH connection configuration
 	config := &ssh.ClientConfig{
-		User: "abdillah",
+		User: username,
 		Auth: []ssh.AuthMethod{
-			ssh.Password("abdillah"),
+			ssh.Password(password),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
 	// Connect to the remote server
-	client, err := ssh.Dial("tcp", "103.130.198.130:22", config)
+	client, err := ssh.Dial("tcp", targetSSH, config)
 	if err != nil {
 		return "", fmt.Errorf("failed to dial: %v", err)
 	}
@@ -37,7 +42,6 @@ func SshTarget(addr string, command string) (string, error) {
 		return "", fmt.Errorf("failed to run command: %v", err)
 	}
 
-	fmt.Println(string(output))
-
+	// fmt.Println(string(output))
 	return string(output), nil
 }
