@@ -6,6 +6,7 @@ import (
 	"github.com/Abedmuh/api-traceroot/internal/users"
 	"github.com/Abedmuh/api-traceroot/utils"
 	"github.com/Abedmuh/api-traceroot/utils/middleware"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
@@ -19,8 +20,10 @@ func main() {
 
 	api := gin.Default()
 	api.Use(middleware.RecoveryMiddleware())
+	api.Use(cors.Default())
 
 	validate := validator.New()
+	validate.RegisterValidation("command", utils.CommandValidator)
 
 	v1 := api.Group("/v1")
 	{
@@ -28,5 +31,5 @@ func main() {
 		productlist.ProductlistRoutes(v1, db, validate)
 		users.RoutesUser(v1, db, validate)
 	}
-	api.Run(":8080") // listen and serve on 0.0.0.0:8080
+	api.Run(":8080")
 }

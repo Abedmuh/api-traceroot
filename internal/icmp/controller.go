@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Abedmuh/api-traceroot/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
@@ -15,21 +14,23 @@ import (
 // }
 
 type icmpCtrlInter interface {
-	PostPing(c *gin.Context)
+	PostLookingGlass(c *gin.Context)
 	PostCountSSE(c *gin.Context)
 }
 
 type icmpCtrlImpl struct {
+	service icmpSvcInter
 	validate *validator.Validate
 }
 
-func NewIcmpController(validate *validator.Validate) icmpCtrlInter {
+func NewIcmpController(service icmpSvcInter,validate *validator.Validate) icmpCtrlInter {
 	return &icmpCtrlImpl{
+		service: service,
 		validate: validate,
 	}
 }
 
-func (c *icmpCtrlImpl) PostPing(ctx *gin.Context) {
+func (c *icmpCtrlImpl) PostLookingGlass(ctx *gin.Context) {
 	var req IcmpSsh
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
@@ -41,7 +42,7 @@ func (c *icmpCtrlImpl) PostPing(ctx *gin.Context) {
 		return
 	}
 
-	output, err := utils.SshTarget(req.Address, req.Command)
+	output, err := c.service.LookingGlass(req)
 	if err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
@@ -76,4 +77,5 @@ func (c *icmpCtrlImpl) PostCountSSE(ctx *gin.Context) {
 	// Akhiri SSE dengan mengirim pesan selesai
 	fmt.Fprint(ctx.Writer, "data: selesai\n\n")
 	flusher.Flush()
+	
 }

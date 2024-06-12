@@ -7,11 +7,12 @@ import (
 
 func IcmpRoutes(route *gin.RouterGroup, validate *validator.Validate) {
 
-	controller := NewIcmpController(validate)
+	service := NewIcmpSvc()
+	controller := NewIcmpController(service, validate)
 
 	endpoint := route.Group("/icmp")
 	{
-		endpoint.POST("/ping", controller.PostPing)
+		endpoint.POST("/", controller.PostLookingGlass)
 		endpoint.POST("/testsse", controller.PostCountSSE)
 	}
 }
