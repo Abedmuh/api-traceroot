@@ -45,9 +45,10 @@ func (p *ProdListSvcImpl) CreateProductList(req products.Products, tx *gorm.DB, 
 		Name:      req.Name,
 		Os:        req.Os,
 		Cpu:       req.Cpu,
+		Ram:       req.Ram,
 		Storage:   req.Storage,
 		Firewall:  req.Firewall,
-		Selinux:   req.Storage,
+		Selinux:   req.Selinux,
 		Location:  req.Location,
 	}
 

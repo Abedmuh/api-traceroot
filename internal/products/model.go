@@ -16,6 +16,7 @@ type Products struct {
 	Name     string `json:"name" validate:"required"`
 	Os       string `json:"os" validate:"required"`
 	Cpu      string `json:"cpu" validate:"required"`
+	Ram      string `json:"ram" validate:"required"`
 	Storage  string `json:"storage" validate:"required"`
 	Firewall bool   `json:"firewall" validate:"required"`
 	Selinux  string `json:"selinux" validate:"required"`

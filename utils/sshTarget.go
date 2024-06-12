@@ -12,6 +12,7 @@ func SshTarget(addr string, command string) (string, error) {
 	targetSSH := viper.GetString("SSH_TARGET")
 	username := viper.GetString("SSH_USERNAME")
 	password := viper.GetString("SSH_PASSWORD")
+
 	// SSH connection configuration
 	config := &ssh.ClientConfig{
 		User: username,
@@ -42,6 +43,5 @@ func SshTarget(addr string, command string) (string, error) {
 		return "", fmt.Errorf("failed to run command: %v", err)
 	}
 
-	// fmt.Println(string(output))
 	return string(output), nil
 }

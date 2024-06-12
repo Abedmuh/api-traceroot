@@ -24,7 +24,7 @@ func main() {
 
 	v1 := api.Group("/v1")
 	{
-		icmp.IcmpRoutes(v1)
+		icmp.IcmpRoutes(v1, validate)
 		productlist.ProductlistRoutes(v1, db, validate)
 		users.RoutesUser(v1, db, validate)
 	}

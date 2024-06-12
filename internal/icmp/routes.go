@@ -2,11 +2,12 @@ package icmp
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
-func IcmpRoutes(route *gin.RouterGroup) {
+func IcmpRoutes(route *gin.RouterGroup, validate *validator.Validate) {
 
-	controller := NewIcmpController()
+	controller := NewIcmpController(validate)
 
 	endpoint := route.Group("/icmp")
 	{

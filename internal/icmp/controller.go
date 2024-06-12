@@ -7,6 +7,7 @@ import (
 
 	"github.com/Abedmuh/api-traceroot/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 // type icmpmodel struct {
@@ -18,21 +19,24 @@ type icmpCtrlInter interface {
 	PostCountSSE(c *gin.Context)
 }
 
-type icmpModel struct {
-	Address string `json:"address"`
-	Command string `json:"command"`
-}
-
 type icmpCtrlImpl struct {
+	validate *validator.Validate
 }
 
-func NewIcmpController() icmpCtrlInter {
-	return &icmpCtrlImpl{}
+func NewIcmpController(validate *validator.Validate) icmpCtrlInter {
+	return &icmpCtrlImpl{
+		validate: validate,
+	}
 }
 
 func (c *icmpCtrlImpl) PostPing(ctx *gin.Context) {
-	var req icmpModel
+	var req IcmpSsh
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := c.validate.Struct(&req); err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
@@ -42,7 +46,10 @@ func (c *icmpCtrlImpl) PostPing(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(200, gin.H{"data": output})
+	ctx.JSON(200, gin.H{
+		"Message": "ssh successfully completed",
+		"data":    output,
+	})
 }
 
 func (c *icmpCtrlImpl) PostCountSSE(ctx *gin.Context) {
