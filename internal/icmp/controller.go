@@ -16,6 +16,7 @@ import (
 type icmpCtrlInter interface {
 	PostLookingGlass(c *gin.Context)
 	PostCountSSE(c *gin.Context)
+	PostLGlist(c *gin.Context)
 }
 
 type icmpCtrlImpl struct {
@@ -77,5 +78,27 @@ func (c *icmpCtrlImpl) PostCountSSE(ctx *gin.Context) {
 	// Akhiri SSE dengan mengirim pesan selesai
 	fmt.Fprint(ctx.Writer, "data: selesai\n\n")
 	flusher.Flush()
-	
+}
+
+func (c *icmpCtrlImpl) PostLGlist(ctx *gin.Context) {
+	var req IcmpSSHs
+    if err := ctx.ShouldBindJSON(&req); err!= nil {
+        ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+        return
+    }
+
+    if err := c.validate.Struct(&req); err!= nil {
+        ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+        return
+    }
+
+    output, err := c.service.ListedLG(req)
+    if err!= nil {
+        ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+        return
+    }
+    ctx.JSON(200, gin.H{
+        "Message": "ssh successfully completed",
+        "data":    output,
+    })
 }

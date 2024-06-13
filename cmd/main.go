@@ -19,8 +19,8 @@ func main() {
 	}
 
 	api := gin.Default()
-	api.Use(middleware.RecoveryMiddleware())
 	api.Use(cors.Default())
+	api.Use(middleware.RecoveryMiddleware())
 
 	validate := validator.New()
 	validate.RegisterValidation("command", utils.CommandValidator)

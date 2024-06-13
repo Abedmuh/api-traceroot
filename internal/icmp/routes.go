@@ -13,6 +13,7 @@ func IcmpRoutes(route *gin.RouterGroup, validate *validator.Validate) {
 	endpoint := route.Group("/icmp")
 	{
 		endpoint.POST("/", controller.PostLookingGlass)
+		endpoint.POST("/list", controller.PostLGlist)
 		endpoint.POST("/testsse", controller.PostCountSSE)
 	}
 }

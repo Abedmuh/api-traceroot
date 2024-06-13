@@ -41,19 +41,29 @@ func SshTarget(target SshTargeting) (string, error) {
 	return string(output), nil
 }
 
-func ConvertRouterToLocations(routers []string) ([]string, error) {
-	var result []string
-	var locationList = map[string]string{
-		"jakarta": "103.130.198.130:22",
-		"bandung": "103.130.198.190:22",
-		// Add more locations as needed
+func fillTheRouter(routers []Routers, servers []Server) error {
+	serverMap := make(map[string]Server)
+	for _, server := range servers {
+		serverMap[server.Name] = server
 	}
-	for _, router := range routers {
-		location, exists := locationList[router]
+
+	for i, router := range routers {
+		server, exists := serverMap[router.Name]
 		if !exists {
-			return nil, fmt.Errorf("unsupported router location: %s", router)
+			return fmt.Errorf("unsupported router location: %s", router.Name)
 		}
-		result = append(result, location)
+
+		if router.Address == nil {
+			routers[i].Address = &server.Address
+		}
+
+		if router.Username == nil {
+			routers[i].Username = &server.Username
+		}
+
+		if router.Password == nil {
+			routers[i].Password = &server.Password
+		}
 	}
-	return result, nil
+	return nil
 }

@@ -8,7 +8,7 @@ import (
 
 type icmpSvcInter interface {
 	LookingGlass(req IcmpSsh) (string, error)
-	TraceRoute(addr string) (int, error)
+	ListedLG(req IcmpSSHs) (map[string]string, error)
 }
 
 type icmpSvcImpl struct {
@@ -20,12 +20,12 @@ func NewIcmpSvc() icmpSvcInter {
 
 func (i *icmpSvcImpl) LookingGlass(req IcmpSsh) (string, error) {
 	targetSSH := viper.GetString("SSH_TARGET")
-	username := viper.GetString("SSH_USERNAME")
-	password := viper.GetString("SSH_PASSWORD")
+	username := viper.GetString("SSH_JAKARTA_USERNAME")
+	password := viper.GetString("SSH_JAKARTA_PASSWORD")
 
 	commandList := map[string]string{
-		"ping":       "ping -c 8",
-		"traceroute": "/usr/sbin/mtr -rnc 3",
+		"ping":       "ping -c 10",
+		"traceroute": "/usr/sbin/mtr -rnc 10",
 	}
 
 	replacement, exists := commandList[req.Command]
@@ -56,6 +56,55 @@ func (i *icmpSvcImpl) LookingGlass(req IcmpSsh) (string, error) {
 	return result, nil
 }
 
-func (i *icmpSvcImpl) TraceRoute(addr string) (int, error) {
-	return 0, nil
+func (i *icmpSvcImpl) ListedLG(req IcmpSSHs) (map[string]string, error) {
+
+	commandList := map[string]string{
+		"ping":       "ping -c 3",
+		"traceroute": "/usr/sbin/mtr -rnc 10",
+	}
+
+	command, exists := commandList[req.Command]
+	if !exists {
+		return nil, fmt.Errorf("unsupported command: %s", req.Command)
+	}
+
+	servers := []Server{
+		{
+			Name:     "jakarta",
+			Address:  "103.130.198.130:22",
+			Username: viper.GetString("SSH_JAKARTA_USERNAME"),
+			Password: viper.GetString("SSH_JAKARTA_PASSWORD"),
+		},
+		{
+			Name:     "bandung",
+			Address:  "190.xxx.xx.xx",
+			Username: viper.GetString("SSH_BANDUNG_USERNAME"),
+			Password: viper.GetString("SSH_BANDUNG_PASSWORD"),
+		},
+	}
+
+	if err := fillTheRouter(req.Routers, servers); err != nil {
+		return nil, err
+	}
+
+	results := make(map[string]string)
+	for _, router := range req.Routers {
+		target := SshTargeting{
+			Address:   req.Target,
+			Command:   command,
+			TargetSSH: *router.Address,
+			Username:  *router.Username,
+			Password:  *router.Password,
+		}
+
+		result, err := SshTarget(target)
+		if err != nil {
+			return nil, err
+		}
+
+		results[router.Name] = result
+	}
+
+
+	return results, nil
 }
