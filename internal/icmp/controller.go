@@ -1,6 +1,7 @@
 package icmp
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -8,10 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
-
-// type icmpmodel struct {
-// 	Message string `json:"message"`
-// }
 
 type icmpCtrlInter interface {
 	PostLookingGlass(c *gin.Context)
@@ -44,13 +41,17 @@ func (c *icmpCtrlImpl) PostLookingGlass(ctx *gin.Context) {
 	}
 
 	output, err := c.service.LookingGlass(req)
+	if errors.Is(err, errSSHconnection){
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
 	if err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	ctx.JSON(200, gin.H{
 		"Message": "ssh successfully completed",
-		"data":    output,
+		"data": output,
 	})
 }
 
@@ -91,8 +92,11 @@ func (c *icmpCtrlImpl) PostLGlist(ctx *gin.Context) {
         ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
         return
     }
-
     output, err := c.service.ListedLG(req)
+	if errors.Is(err, errSSHconnection){
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
     if err!= nil {
         ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
         return

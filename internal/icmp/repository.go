@@ -18,16 +18,18 @@ func SshTarget(target SshTargeting) (string, error) {
 	}
 
 	// Connect to the remote server
-	client, err := ssh.Dial("tcp", target.TargetSSH, config)
+	client, err := ssh.Dial("tcp", target.Host, config)
 	if err != nil {
-		return "", fmt.Errorf("failed to dial: %v", err)
+		fmt.Println(fmt.Errorf("failed to dial: %v", err))
+		return "", errSSHconnection
 	}
 	defer client.Close()
 
 	// Create a session
 	session, err := client.NewSession()
 	if err != nil {
-		return "", fmt.Errorf("failed to create session: %v", err)
+		fmt.Println(fmt.Errorf("failed to create session: %v", err))
+		return "", errSSHconnection
 	}
 	defer session.Close()
 
@@ -35,7 +37,8 @@ func SshTarget(target SshTargeting) (string, error) {
 	fullCommand := fmt.Sprintf("%s %s", target.Command, target.Address)
 	output, err := session.CombinedOutput(fullCommand)
 	if err != nil {
-		return "", fmt.Errorf("failed to run command: %v", err)
+		fmt.Println(fmt.Errorf("failed to run command: %v", err))
+		return "", errSSHconnection
 	}
 
 	return string(output), nil
@@ -54,7 +57,7 @@ func fillTheRouter(routers []Routers, servers []Server) error {
 		}
 
 		if router.Address == nil {
-			routers[i].Address = &server.Address
+			routers[i].Address = &server.Host
 		}
 
 		if router.Username == nil {

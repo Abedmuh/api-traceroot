@@ -60,6 +60,7 @@ func (p *ProdListSvcImpl) CreateProductList(req products.Products, tx *gorm.DB, 
 }
 
 func (p *ProdListSvcImpl) GetProductsList(req ProductList, tx *gorm.DB, ctx *gin.Context) error {
+	
 	return nil
 }
 
