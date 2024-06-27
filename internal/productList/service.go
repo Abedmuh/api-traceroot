@@ -13,7 +13,7 @@ import (
 type ProdListSvcInter interface {
 	CreateProductList(req products.Products, tx *gorm.DB, ctx *gin.Context) (ProductList, error)
 	GetProductsLists(req ProductList, tx *gorm.DB, ctx *gin.Context) error
-	GetProductsList(req ProductList, tx *gorm.DB, ctx *gin.Context) error
+	GetProductListById(req ProductList, tx *gorm.DB, ctx *gin.Context) error
 	UpdateProductList(req ProductList, tx *gorm.DB, ctx *gin.Context) error
 	DeleteProductList(tx *gorm.DB, ctx *gin.Context) error
 }
@@ -56,10 +56,17 @@ func (p *ProdListSvcImpl) CreateProductList(req products.Products, tx *gorm.DB, 
 	if err := tx.Create(productList).Error; err != nil {
 		return ProductList{}, err
 	}
+
+	eror := CreateVmWithESXI(ctx, productList) 
+	if eror!= nil {
+        return ProductList{}, eror
+    }
+
 	return productList, nil
 }
 
-func (p *ProdListSvcImpl) GetProductsList(req ProductList, tx *gorm.DB, ctx *gin.Context) error {
+func (p *ProdListSvcImpl) GetProductListById(req ProductList, tx *gorm.DB, ctx *gin.Context) error {
+
 	
 	return nil
 }

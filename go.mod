@@ -9,6 +9,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.19.0
+	github.com/vmware/govmomi v0.37.3
 	golang.org/x/crypto v0.23.0
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.25.10

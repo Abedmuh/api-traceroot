@@ -10,7 +10,7 @@ import (
 // interface
 type ProdListCtrlInter interface {
 	GetProductLists(c *gin.Context)
-	GetProductList(c *gin.Context)
+	GetProductListById(c *gin.Context)
 	PostProductList(c *gin.Context)
 	PutProductList(c *gin.Context)
 	DeleteProductList(c *gin.Context)
@@ -34,7 +34,18 @@ func (c *ProdListCtrlImpl) GetProductLists(ctx *gin.Context) {
 
 }
 
-func (c *ProdListCtrlImpl) GetProductList(ctx *gin.Context) {}
+func (c *ProdListCtrlImpl) GetProductListById(ctx *gin.Context) {
+	var req products.Products
+    if err := ctx.ShouldBindJSON(&req); err!= nil {
+        ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+        return
+    }
+    if err := c.validate.Struct(req); err!= nil {
+        ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+        return
+    }
+	
+}
 
 func (c *ProdListCtrlImpl) PostProductList(ctx *gin.Context) {
 	var req products.Products

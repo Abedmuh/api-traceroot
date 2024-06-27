@@ -17,7 +17,7 @@ func ProductlistRoutes(route *gin.RouterGroup, db *gorm.DB, validate *validator.
 		endpoint.Use(middleware.Authentication())
 		endpoint.POST("/", controller.PostProductList)
 		endpoint.GET("/", controller.GetProductLists)
-		endpoint.GET("/:id", controller.GetProductList)
+		endpoint.GET("/:id", controller.GetProductListById)
 		endpoint.PUT("/:id", controller.PutProductList)
 		endpoint.DELETE("/:id", controller.DeleteProductList)
 	}

@@ -14,11 +14,11 @@ func GetDBConnection() (*gorm.DB, error) {
 
 	viper.SetConfigFile(".env")
 	viper.AddConfigPath("../")
-	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			log.Printf("Error reading .env file: %v\n", err)
 			log.Println("Switching to environment variables...")
+			viper.AutomaticEnv()
 		} else {
 			log.Fatalf("file found but error: %v\n", err)
 		}
