@@ -32,7 +32,7 @@ func CreateVM(ctx *gin.Context, client *govmomi.Client, resources *Resources, re
 				Key: 2000,
 				Backing: &types.VirtualCdromIsoBackingInfo{
 					VirtualDeviceFileBackingInfo: types.VirtualDeviceFileBackingInfo{
-						FileName: "[" + resources.Datastore.Name() + "] Operating System/CentOS-7-x86_64-Minimal-2009.iso",
+						FileName: "[" + resources.Datastore.Name() + "] " + reqData.Location,
 					},
 				},
 				ControllerKey: 200, // Key of the controller to which the CD/DVD drive is attached
@@ -101,7 +101,7 @@ func CreateVM(ctx *gin.Context, client *govmomi.Client, resources *Resources, re
 	// Define VM configuration
 	vmConfigSpec := types.VirtualMachineConfigSpec{
 		Name:     reqData.VmName,
-		GuestId:  "centos7_64Guest", // Use appopriate GuestId
+		GuestId:  reqData.OsGuestId,
 		Files:    &types.VirtualMachineFileInfo{VmPathName: "[" + resources.Datastore.Name() + "]"},
 		NumCPUs:  reqData.Cpu,
 		MemoryMB: reqData.Ram,

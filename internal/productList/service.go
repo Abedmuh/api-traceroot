@@ -40,8 +40,8 @@ func (p *ProdListSvcImpl) CreateProductList(req products.Products, tx *gorm.DB, 
 	productList := ProductList{
 		Owner:     reqUser,
 		Timelimit: time.Now().Add(time.Duration(24) * time.Hour),
-		Username:  "myacc",
-		Password:  "pass",
+		Username:  req.Username,
+		Password:  req.Password,
 		Name:      req.Name,
 		Os:        req.Os,
 		Cpu:       req.Cpu,
@@ -56,11 +56,6 @@ func (p *ProdListSvcImpl) CreateProductList(req products.Products, tx *gorm.DB, 
 	if err := tx.Create(productList).Error; err != nil {
 		return ProductList{}, err
 	}
-
-	eror := CreateVmWithESXI(ctx, productList) 
-	if eror!= nil {
-        return ProductList{}, eror
-    }
 
 	return productList, nil
 }

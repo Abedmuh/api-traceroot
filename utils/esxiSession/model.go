@@ -20,4 +20,5 @@ type SessionData struct {
 	Ram int64
 	Storage int64
 	OsGuestId string
+	Location string
 }

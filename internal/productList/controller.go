@@ -57,11 +57,18 @@ func (c *ProdListCtrlImpl) PostProductList(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
+	
 	res, err := c.service.CreateProductList(req, c.Db, ctx)
 	if err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
+
+	err = CreateVmWithESXI(ctx, res) 
+	if err!= nil {
+		ctx.AbortWithStatusJSON(503, gin.H{"error": err.Error()})
+        return 
+    }
 
 	ctx.JSON(200, gin.H{
 		"data":    res,

@@ -2,7 +2,6 @@ package productlist
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/Abedmuh/api-traceroot/utils/esxiSession"
 	"github.com/gin-gonic/gin"
@@ -10,31 +9,21 @@ import (
 
 func CreateVmWithESXI(ctx *gin.Context, product ProductList) error {
 
-	vcpu, err := strconv.ParseInt(product.Cpu, 10, 32)
-    if err != nil {
-        fmt.Println("Error:", err)
-        return err
-    }
-	vram, err := strconv.ParseInt(product.Ram, 10, 32)
-	if err!= nil {
-        fmt.Println("Error:", err)
-        return err
-    }
-	hdd, err := strconv.ParseInt(product.Storage, 10, 32)
-	if err!= nil {
-        fmt.Println("Error:", err)
-        return err
-    }
+	os, exists := OsMap[product.Os]
+	if !exists {
+		return fmt.Errorf("unsupported os location: %s", product.Os)
+	}
 
 	//data
 	sessionData := esxiSession.SessionData{
 		Username: product.Username,
 		Password: product.Password,
 		VmName: product.Name,
-		Cpu: int32(vcpu),
-		Ram: vram,
-		Storage: hdd,
+		Cpu: product.Cpu,
+		Ram: product.Ram,
+		Storage: product.Storage,
 		OsGuestId: product.Os,
+		Location: os.Location,
 	}
 
 	//stage 1: login to ESXI server
