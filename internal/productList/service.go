@@ -1,10 +1,10 @@
 package productlist
 
 import (
-	"errors"
 	"time"
 
 	"github.com/Abedmuh/api-traceroot/internal/products"
+	"github.com/Abedmuh/api-traceroot/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -12,8 +12,8 @@ import (
 // interface
 type ProdListSvcInter interface {
 	CreateProductList(req products.Products, tx *gorm.DB, ctx *gin.Context) (ProductList, error)
-	GetProductsLists(req ProductList, tx *gorm.DB, ctx *gin.Context) error
-	GetProductListById(req ProductList, tx *gorm.DB, ctx *gin.Context) error
+	GetProductsLists(tx *gorm.DB, ctx *gin.Context) ([]ProductList, error)
+	GetProductListById(id string, tx *gorm.DB, ctx *gin.Context) (products.Products, error)
 	UpdateProductList(req ProductList, tx *gorm.DB, ctx *gin.Context) error
 	DeleteProductList(tx *gorm.DB, ctx *gin.Context) error
 }
@@ -27,18 +27,14 @@ func NewProdListSvc() ProdListSvcInter {
 
 func (p *ProdListSvcImpl) CreateProductList(req products.Products, tx *gorm.DB, ctx *gin.Context) (ProductList, error) {
 	// decode token auth
-	user, err := ctx.Get("email")
-	if !err {
-		return ProductList{}, errors.New("unathorized cant find user")
-	}
-	reqUser, err := user.(string)
-	if !err {
-		return ProductList{}, errors.New("Unathorized")
-	}
+	user, err := utils.ParamBreakUser(ctx)
+	if err!= nil {
+        return ProductList{}, err
+    }
 
 	//model synchronized
 	productList := ProductList{
-		Owner:     reqUser,
+		Owner:     user,
 		Timelimit: time.Now().Add(time.Duration(24) * time.Hour),
 		Username:  req.Username,
 		Password:  req.Password,
@@ -60,14 +56,30 @@ func (p *ProdListSvcImpl) CreateProductList(req products.Products, tx *gorm.DB, 
 	return productList, nil
 }
 
-func (p *ProdListSvcImpl) GetProductListById(req ProductList, tx *gorm.DB, ctx *gin.Context) error {
+func (p *ProdListSvcImpl) GetProductListById(req string, tx *gorm.DB, ctx *gin.Context) (products.Products, error) {
+	user, err := utils.ParamBreakUser(ctx)
+	if err!= nil {
+        return products.Products{}, err
+    }
 
-	
-	return nil
+	var productList ProductList
+	if err := tx.Where("id =? AND owner =?", req, user).First(&productList).Error; err!= nil {
+        return products.Products{}, err
+    }
+	return products.Products{}, nil
 }
 
-func (p *ProdListSvcImpl) GetProductsLists(req ProductList, tx *gorm.DB, ctx *gin.Context) error {
-	return nil
+func (p *ProdListSvcImpl) GetProductsLists(tx *gorm.DB, ctx *gin.Context) ([]ProductList, error) {
+	user, err := utils.ParamBreakUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var productLists []ProductList
+	if err := tx.Where("owner =?", user).Find(&productLists).Error; err!= nil {
+        return nil, err
+    }
+	return productLists, nil
 }
 
 func (p *ProdListSvcImpl) UpdateProductList(req ProductList, tx *gorm.DB, ctx *gin.Context) error {

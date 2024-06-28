@@ -1,12 +1,13 @@
 package esxiSession
 
 import (
+	"context"
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/vmware/govmomi"
+	"github.com/vmware/govmomi/find"
 	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/vim25/types"
 )
@@ -127,20 +128,47 @@ func CreateVM(ctx *gin.Context, client *govmomi.Client, resources *Resources, re
 	}
 
 	vm := object.NewVirtualMachine(client.Client, taskInfo.Result.(types.ManagedObjectReference))
-
-	// Power on the VM
-	powerOnTask, err := vm.PowerOn(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to power on VM: %w", err)
-	}
-
-	// Wait for the power-on task to complete
-	err = powerOnTask.Wait(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to wait for power-on task: %w", err)
-	}
-
-	// Wait for a few seconds to ensure the VM is fully powered on
-	time.Sleep(10 * time.Second)
 	return vm, nil
+}
+
+func DestroyVMByName(ctx context.Context, client *govmomi.Client, vmName string) error {
+	finder := find.NewFinder(client.Client, false)
+
+	datacenter, err := finder.DefaultDatacenter(ctx)
+	if err != nil {
+		return fmt.Errorf("error finding datacenter: %w", err)
+	}
+
+	finder.SetDatacenter(datacenter)
+
+	vm, err := finder.VirtualMachine(ctx, vmName)
+	if err != nil {
+		return fmt.Errorf("error finding VM '%s': %w", vmName, err)
+	}
+
+	powerState, err := vm.PowerState(ctx)
+	if err != nil {
+		return fmt.Errorf("error retrieving VM power state: %w", err)
+	}
+	if powerState != "poweredOff" {
+		task, err := vm.PowerOff(ctx)
+		if err != nil {
+			return fmt.Errorf("error powering off VM '%s': %w", vmName, err)
+		}
+		if err := task.Wait(ctx); err != nil {
+			return fmt.Errorf("error waiting for VM power off task: %w", err)
+		}
+		fmt.Printf("VM '%s' powered off successfully.\n", vmName)
+	}
+
+	task, err := vm.Destroy(ctx)
+	if err != nil {
+		return fmt.Errorf("error destroying VM '%s': %w", vmName, err)
+	}
+	if err := task.Wait(ctx); err != nil {
+		return fmt.Errorf("error waiting for VM destroy task: %w", err)
+	}
+	fmt.Printf("VM '%s' destroyed successfully.\n", vmName)
+
+	return nil
 }

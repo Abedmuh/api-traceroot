@@ -31,20 +31,24 @@ func NewProdListCtrl(service ProdListSvcInter, Db *gorm.DB, validate *validator.
 }
 
 func (c *ProdListCtrlImpl) GetProductLists(ctx *gin.Context) {
-
+    res, err := c.service.GetProductsLists(c.Db, ctx)
+    if err!= nil {
+        ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+        return
+    }
+    ctx.JSON(200, res)
 }
 
 func (c *ProdListCtrlImpl) GetProductListById(ctx *gin.Context) {
-	var req products.Products
-    if err := ctx.ShouldBindJSON(&req); err!= nil {
+	id := ctx.Param("id")
+
+    res, err := c.service.GetProductListById(id, c.Db, ctx)
+    if err!= nil {
         ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
         return
     }
-    if err := c.validate.Struct(req); err!= nil {
-        ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
-        return
-    }
-	
+
+    ctx.JSON(200, res)
 }
 
 func (c *ProdListCtrlImpl) PostProductList(ctx *gin.Context) {
@@ -57,7 +61,7 @@ func (c *ProdListCtrlImpl) PostProductList(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	res, err := c.service.CreateProductList(req, c.Db, ctx)
 	if err != nil {
 		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
