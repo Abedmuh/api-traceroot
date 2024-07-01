@@ -70,7 +70,7 @@ var OsMap = map[string]OsDetails{
         Name:        "CentOS",
         Version:     "7.6",
         GuestId:     "centos7_64Guest",
-        Location:     "US East",
+        Location:     "Operating System/CentOS-7-x86_64-Minimal-2009.iso",
     },
     // Add more Os details here
 }

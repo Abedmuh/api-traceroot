@@ -22,7 +22,7 @@ func CreateVmWithESXI(ctx *gin.Context, server ServerList) error {
 		Cpu: server.Cpu,
 		Ram: server.Ram,
 		Storage: server.Storage,
-		OsGuestId: server.Os,
+		OsGuestId: os.GuestId,
 		Location: os.Location,
 	}
 
