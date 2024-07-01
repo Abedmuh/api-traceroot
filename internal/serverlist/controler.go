@@ -20,13 +20,7 @@ type ServerListCtrlImpl struct {
 	validate *validator.Validate
 }
 
-func NewServerListCtrl(service ServerListSvcInter, db *gorm.DB, validate *validator.Validate) ServerListCtrlInter {
-	return &ServerListCtrlImpl{
-		service:  service,
-		Db:       db,
-		validate: validate,
-	}
-}
+
 
 func (c *ServerListCtrlImpl) GetServerList(ctx *gin.Context) {
 	res, err := c.service.GetServerLists(c.Db, ctx)
@@ -66,11 +60,11 @@ func (c *ServerListCtrlImpl) PostServerList(ctx *gin.Context) {
 		return
 	}
 
-	// err = CreateVmWithESXI(ctx, res)
-	// if err!= nil {
-	// 	ctx.AbortWithStatusJSON(503, gin.H{"error": err.Error()})
-	//     return
-	// }
+	err = CreateVmWithESXI(ctx, res)
+	if err!= nil {
+		ctx.AbortWithStatusJSON(503, gin.H{"error": err.Error()})
+	    return
+	}
 
 	ctx.JSON(201, gin.H{
 		"data":    res,

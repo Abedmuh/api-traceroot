@@ -128,6 +128,11 @@ func CreateVM(ctx *gin.Context, client *govmomi.Client, resources *Resources, re
 	}
 
 	vm := object.NewVirtualMachine(client.Client, taskInfo.Result.(types.ManagedObjectReference))
+
+	err = TurnVm(vm, ctx, true)
+	if err!= nil {
+        return nil, fmt.Errorf("failed to turn VM on: %w", err)
+    }
 	return vm, nil
 }
 

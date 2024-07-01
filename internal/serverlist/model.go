@@ -60,12 +60,6 @@ type OsDetails struct {
 }
 
 var OsMap = map[string]OsDetails{
-	"Ubuntu": {
-        Name:        "Ubuntu",
-        Version:     "18.04",
-        GuestId:     "ubuntu-18.04",
-        Location:     "US West",
-    },
     "CentOS": {
         Name:        "CentOS",
         Version:     "7.6",

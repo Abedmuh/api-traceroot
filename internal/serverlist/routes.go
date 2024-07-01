@@ -20,3 +20,11 @@ func ServerListRoutes(route *gin.RouterGroup, tx *gorm.DB, validate *validator.V
 		endpoint.DELETE("/:id", controller.DeleteServerList)
 	}
 }
+
+func NewServerListCtrl(service ServerListSvcInter, db *gorm.DB, validate *validator.Validate) ServerListCtrlInter {
+	return &ServerListCtrlImpl{
+		service:  service,
+		Db:       db,
+		validate: validate,
+	}
+}
