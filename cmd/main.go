@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/Abedmuh/api-traceroot/internal/icmp"
 	productlist "github.com/Abedmuh/api-traceroot/internal/productList"
+	serverlist "github.com/Abedmuh/api-traceroot/internal/serverList"
 	"github.com/Abedmuh/api-traceroot/internal/users"
 	"github.com/Abedmuh/api-traceroot/utils"
 	"github.com/Abedmuh/api-traceroot/utils/middleware"
@@ -30,6 +31,7 @@ func main() {
 		icmp.IcmpRoutes(v1, validate)
 		productlist.ProductlistRoutes(v1, db, validate)
 		users.RoutesUser(v1, db, validate)
+		serverlist.ServerListRoutes(v1, db, validate)
 	}
 	api.Run(":8080")
 }

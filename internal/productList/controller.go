@@ -68,11 +68,11 @@ func (c *ProdListCtrlImpl) PostProductList(ctx *gin.Context) {
 		return
 	}
 
-	err = CreateVmWithESXI(ctx, res) 
-	if err!= nil {
-		ctx.AbortWithStatusJSON(503, gin.H{"error": err.Error()})
-        return 
-    }
+	// err = CreateVmWithESXI(ctx, res) 
+	// if err!= nil {
+	// 	ctx.AbortWithStatusJSON(503, gin.H{"error": err.Error()})
+    //     return 
+    // }
 
 	ctx.JSON(200, gin.H{
 		"data":    res,
@@ -80,6 +80,28 @@ func (c *ProdListCtrlImpl) PostProductList(ctx *gin.Context) {
 	})
 }
 
-func (c *ProdListCtrlImpl) PutProductList(ctx *gin.Context) {}
+func (c *ProdListCtrlImpl) PutProductList(ctx *gin.Context) {
+	id := ctx.Param("id")
+	var req ProductList
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	if err := c.validate.Struct(req); err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := c.service.UpdateProductList(id, req, c.Db, ctx)
+	if err!= nil {
+        ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+        return
+    }
+
+    ctx.JSON(200, gin.H{
+		"message": "Successfully updated product",
+	})
+}
 
 func (c *ProdListCtrlImpl) DeleteProductList(ctx *gin.Context) {}

@@ -14,7 +14,7 @@ type ProdListSvcInter interface {
 	CreateProductList(req products.Products, tx *gorm.DB, ctx *gin.Context) (ProductList, error)
 	GetProductsLists(tx *gorm.DB, ctx *gin.Context) ([]ProductList, error)
 	GetProductListById(id string, tx *gorm.DB, ctx *gin.Context) (products.Products, error)
-	UpdateProductList(req ProductList, tx *gorm.DB, ctx *gin.Context) error
+	UpdateProductList(id string,req ProductList, tx *gorm.DB, ctx *gin.Context) error
 	DeleteProductList(tx *gorm.DB, ctx *gin.Context) error
 }
 
@@ -27,7 +27,7 @@ func NewProdListSvc() ProdListSvcInter {
 
 func (p *ProdListSvcImpl) CreateProductList(req products.Products, tx *gorm.DB, ctx *gin.Context) (ProductList, error) {
 	// decode token auth
-	user, err := utils.ParamBreakUser(ctx)
+	user, err := utils.GetTokenEmail(ctx)
 	if err!= nil {
         return ProductList{}, err
     }
@@ -57,7 +57,7 @@ func (p *ProdListSvcImpl) CreateProductList(req products.Products, tx *gorm.DB, 
 }
 
 func (p *ProdListSvcImpl) GetProductListById(req string, tx *gorm.DB, ctx *gin.Context) (products.Products, error) {
-	user, err := utils.ParamBreakUser(ctx)
+	user, err := utils.GetTokenEmail(ctx)
 	if err!= nil {
         return products.Products{}, err
     }
@@ -70,7 +70,7 @@ func (p *ProdListSvcImpl) GetProductListById(req string, tx *gorm.DB, ctx *gin.C
 }
 
 func (p *ProdListSvcImpl) GetProductsLists(tx *gorm.DB, ctx *gin.Context) ([]ProductList, error) {
-	user, err := utils.ParamBreakUser(ctx)
+	user, err := utils.GetTokenEmail(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (p *ProdListSvcImpl) GetProductsLists(tx *gorm.DB, ctx *gin.Context) ([]Pro
 	return productLists, nil
 }
 
-func (p *ProdListSvcImpl) UpdateProductList(req ProductList, tx *gorm.DB, ctx *gin.Context) error {
+func (p *ProdListSvcImpl) UpdateProductList(id string,req ProductList, tx *gorm.DB, ctx *gin.Context) error {
 	return nil
 }
 
