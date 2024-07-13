@@ -20,8 +20,6 @@ type ServerListCtrlImpl struct {
 	validate *validator.Validate
 }
 
-
-
 func (c *ServerListCtrlImpl) GetServerList(ctx *gin.Context) {
 	res, err := c.service.GetServerLists(c.Db, ctx)
 	if err != nil {

@@ -2,8 +2,6 @@ package icmp
 
 import (
 	"errors"
-
-	"github.com/spf13/viper"
 )
 
 type IcmpSsh struct {
@@ -41,23 +39,8 @@ type Server struct {
 }
 
 var errSSHconnection = errors.New("ssh connection failed")
-
+var servers []Server
 var commandList = map[string]string{
-	"ping":       "ping -c 3",
+	"ping":       "ping -c 10",
 	"traceroute": "/usr/sbin/mtr -rnc 10",
-}
-
-var servers = []Server{
-	{
-		Name:     "jakarta",
-		Host:  	  "103.130.198.130:22",
-		Username: viper.GetString("SSH_JAKARTA_USERNAME"),
-		Password: viper.GetString("SSH_JAKARTA_PASSWORD"),
-	},
-	{
-		Name:     "bandung",
-		Host:     "190.xxx.xx.xx",
-		Username: viper.GetString("SSH_BANDUNG_USERNAME"),
-		Password: viper.GetString("SSH_BANDUNG_PASSWORD"),
-	},
 }
