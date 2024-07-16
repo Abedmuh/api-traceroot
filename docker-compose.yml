@@ -1,0 +1,23 @@
+version: "3.8"
+
+networks:
+  abhvps:
+    driver: bridge
+
+volumes:
+  api:
+
+services:
+  web:
+    build: .
+    container_name: backend
+    hostname: web
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - abhvps
+    env_file:
+      - /api-traceroot/.env
+    volumes:
+      - api:/usr/src/app/

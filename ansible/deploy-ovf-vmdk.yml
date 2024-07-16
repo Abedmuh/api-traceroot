@@ -1,0 +1,38 @@
+---
+- name: Deploy Ovf
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - vmware-credentials.yml
+  connection: local
+  collections:
+    - community.vmware
+  tasks:
+    - name: Deploy Ovf by blocking
+      block:
+        - name: Deploy Ovf and vmdk
+          vmware_deploy_ovf:
+            hostname: "{{ esxi_hostname }}"
+            username: "{{ esxi_username }}"
+            password: "{{ esxi_password }}"
+            datacenter: "{{ esxi_datacenter }}"
+            datastore: "{{ esxi_datastore }}"
+            name: "{{ esxi_name }}"
+            ovf: "{{ esxi_ovf }}"
+            networks:
+              "{{ esxi_networks }}": "{{ esxi_networks }}"
+            power_on: false
+            wait: false
+            validate_certs: false
+          async: 10
+          poll: 2
+          register: deploy_result
+          delegate_to: localhost
+        - name: Fail the playbook if OVF deployment fails
+          fail:
+            msg: "Deployment of OVF failed. Stopping the playbook."
+          when: deploy_result.failed
+      rescue:
+        - name: Fail the playbook if OVF deployment fails
+          fail:
+            msg: "Deployment of OVF failed. Stopping the playbook."      
