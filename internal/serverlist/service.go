@@ -1,6 +1,9 @@
 package serverlist
 
 import (
+	"fmt"
+	"log"
+	"os/exec"
 	"time"
 
 	"github.com/Abedmuh/api-traceroot/utils"
@@ -14,6 +17,7 @@ type ServerListSvcInter interface {
 	GetServerListById(id string, tx *gorm.DB, ctx *gin.Context) (ServerList, error)
 	UpdateServerList(id string, req ServerList, tx *gorm.DB, ctx *gin.Context) error
 	DeleteServerList(tx *gorm.DB, ctx *gin.Context) error
+	TestAnsibleServer(ctx *gin.Context) (string, error)
 }
 
 type ServerListSvcImpl struct {
@@ -83,6 +87,38 @@ func (s *ServerListSvcImpl) UpdateServerList(id string, req ServerList, tx *gorm
 
 func (s *ServerListSvcImpl) DeleteServerList(tx *gorm.DB, ctx *gin.Context) error {
 	return nil
+}
+
+func (s *ServerListSvcImpl) TestAnsibleServer(ctx *gin.Context) (string,error) {
+
+	// Example arguments
+    esxiValidateCerts := "false"
+    esxiName := "Test-Athena-Cloner"
+    esxiOvf := "./res/Test-Athena-centos709.ovf"
+    esxiNetworks := "vl99-POC-VPS"
+    guestHardwareEsxiNumCpu := "2"
+    guestHardwareEsxiMemoryMb := "4096"
+    guestHardwareEsxiStorage := "24"
+
+    scriptPath := "./commandscript/deployovf.sh"
+
+    cmd := exec.Command("sh", scriptPath, 
+	esxiValidateCerts, 
+	esxiName, 
+	esxiOvf, 
+	esxiNetworks, 
+	guestHardwareEsxiNumCpu, 
+	guestHardwareEsxiMemoryMb, 
+	guestHardwareEsxiStorage)
+	
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		// Log the detailed error message
+		log.Printf("Ansible playbook error: %s\nOutput: %s", err.Error(), string(output))
+		return "", fmt.Errorf("ansible playbook execution failed: %s", string(output))
+	}
+    
+	return scriptPath, nil
 }
 
 

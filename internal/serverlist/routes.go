@@ -18,6 +18,7 @@ func ServerListRoutes(route *gin.RouterGroup, tx *gorm.DB, validate *validator.V
 		endpoint.GET("/:id", controller.GetServerListById)
 		endpoint.PUT("/:id", controller.PutServerList)
 		endpoint.DELETE("/:id", controller.DeleteServerList)
+		endpoint.POST("/testserver", controller.TestAnsibleServerList)
 	}
 }
 

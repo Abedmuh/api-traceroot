@@ -12,6 +12,7 @@ type ServerListCtrlInter interface {
 	PostServerList(c *gin.Context)
 	PutServerList(c *gin.Context)
 	DeleteServerList(c *gin.Context)
+	TestAnsibleServerList(c *gin.Context)
 }
 
 type ServerListCtrlImpl struct {
@@ -73,3 +74,24 @@ func (c *ServerListCtrlImpl) PostServerList(ctx *gin.Context) {
 func (c *ServerListCtrlImpl) PutServerList(ctx *gin.Context) {}
 
 func (c *ServerListCtrlImpl) DeleteServerList(ctx *gin.Context) {}
+
+func (c *ServerListCtrlImpl) TestAnsibleServerList(ctx *gin.Context) {
+	var req ReqServerList
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	if err := c.validate.Struct(req); err != nil {
+		ctx.AbortWithStatusJSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	res,err:= c.service.TestAnsibleServer(ctx)
+	if err!= nil {
+		ctx.AbortWithStatusJSON(500, gin.H{"error": err.Error()})
+        return 
+    }
+    ctx.JSON(201, gin.H{
+		"data":    res,
+		"message": "Successfully created server list",
+	})
+}

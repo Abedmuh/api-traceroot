@@ -34,8 +34,6 @@ func GetDBConnection() (*gorm.DB, error) {
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?%s",
 		dbUser, dbPassword, dbHost, dbPort, dbName, dbParams)
 
-	fmt.Println(connStr)
-
 	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
 		return nil, err
